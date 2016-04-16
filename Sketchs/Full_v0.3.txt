@@ -1,0 +1,87 @@
+#include "DHT.h"
+#include <Servo.h> //используем библиотеку для работы с сервоприводом
+
+#define DHTPIN 8 // номер пина, к которому подсоединен датчик
+// Раскомментируйте в соответствии с используемым датчиком
+// Инициируем датчик
+
+Servo servo;
+DHT dht(DHTPIN, DHT11);
+float h =30.0;
+float t =30.0;
+boolean servoSatus = false;
+boolean handOpen = false;
+float tempLimit = 30.0;
+
+void setup() {
+  //Устанавливаем скорость UART
+  Serial.begin(9600); 
+  //Настраиваем нужные пины на выход
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);  
+  servo.attach(9);
+  servo.write(0);
+  //запуск дачика
+  dht.begin();  
+}
+
+void loop() {
+  //Если данные пришли
+  if (Serial.available() > 0) {
+    Serial.print(h);  
+    Serial.print(t);
+    if(servoSatus) {
+      Serial.print(1);
+    } 
+    else{
+      Serial.print(0);
+    }
+
+    //Считываем пришедший байт
+    byte incomingByte = Serial.read();
+    if(incomingByte==75){
+      if(!servoSatus && !handOpen){
+        servo.write(180);
+        servoSatus=true;
+        handOpen= true;
+      }
+      else{
+        servo.write(0); 
+        servoSatus=false;
+        handOpen= false;
+      } 
+    }
+
+    //Получаем номер пина путем целочисленного деления значения принятого байта на 10
+    //и нужное нам действие за счет получения остатка от деления на 2:
+    //(1 - зажечь, 0 - погасить)
+    digitalWrite(incomingByte / 10, incomingByte % 2);
+  }
+
+  if(t>tempLimit && !handOpen){
+    if(!servoSatus){
+      servo.write(180);
+    }
+    servoSatus=true;
+  }   
+  else if (!handOpen){
+    if(servoSatus){
+      servo.write(0); 
+    }   
+    servoSatus=false;
+  }
+  updateDate();
+}
+
+void updateDate(){
+  //Считываем влажность
+  float hh = dht.readHumidity();
+  // Считываем температуру
+  float  tt = dht.readTemperature();
+  // Проверка удачно прошло ли считывание.
+  if (isnan(h) || isnan(t)) {
+    return;
+  }
+  t=tt;
+  h=hh;
+}

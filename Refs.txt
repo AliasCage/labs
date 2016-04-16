@@ -1,0 +1,7 @@
+http://edurobots.ru/2015/02/arduino-dlya-nachinayushhix-urok-9-podklyuchenie-datchika-temperatury-i-vlazhnosti-dht11-i-dht22/
+http://chioszrobots.com/2013/07/15/redesign-dht11-temperature-and-relative-humidity-sensor-module/
+http://edurobots.ru/2014/04/arduino-servoprivod/
+https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/IOUtils.html
+https://www.arduino.cc/en/Reference/ServoRead
+edurobots.ru/2014/04/arduino-servoprivod/
+https://www.google.com/design/spec/style/color.html#color-color-palette

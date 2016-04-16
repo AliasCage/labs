@@ -1,0 +1,38 @@
+int i = 3;
+float g =23.123;
+char charVal[10];
+String stringVal = "4";     
+void setup() {
+  //”станавливаем скорость UART
+  Serial.begin(9600); 
+
+  //Ќастраиваем нужные пины на выход
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);    
+}
+
+void loop() {
+  //≈сли данные пришли
+  if (Serial.available() > 0) {
+    i=i+3;
+    //Serial.write("asdas");
+    dtostrf(g, 4, 4, charVal); 
+    Serial.write(charVal); 
+   
+    
+    //—читываем пришедший байт
+    byte incomingByte = Serial.read();
+
+    //ѕолучаем номер пина путем целочисленного делени€ значени€ прин€того байта на 10
+    //и нужное нам действие за счет получени€ остатка от делени€ на 2:
+    //(1 - зажечь, 0 - погасить)
+    digitalWrite(incomingByte / 10, incomingByte % 2);
+  }
+}
+
+
+
+
+
+
+

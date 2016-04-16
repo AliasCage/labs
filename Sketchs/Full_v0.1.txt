@@ -1,0 +1,48 @@
+#include "DHT.h"
+
+#define DHTPIN 8 // номер пина, к которому подсоединен датчик
+// Раскомментируйте в соответствии с используемым датчиком
+// Инициируем датчик
+
+
+DHT dht(DHTPIN, DHT11);
+float h =30.0;
+float t =30.0;
+char charVal[14];
+void setup() {
+  //Устанавливаем скорость UART
+  Serial.begin(9600); 
+  //Настраиваем нужные пины на выход
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);  
+  //запуск дачика
+  dht.begin();  
+}
+
+void loop() {
+  //Если данные пришли
+  if (Serial.available() > 0) {
+    Serial.print(h);  
+    Serial.print(t);  
+
+    //Считываем пришедший байт
+    byte incomingByte = Serial.read();
+
+    //Получаем номер пина путем целочисленного деления значения принятого байта на 10
+    //и нужное нам действие за счет получения остатка от деления на 2:
+    //(1 - зажечь, 0 - погасить)
+    digitalWrite(incomingByte / 10, incomingByte % 2);
+  }
+  //Считываем влажность
+  float hh = dht.readHumidity();
+  // Считываем температуру
+  float  tt = dht.readTemperature();
+  // Проверка удачно прошло ли считывание.
+  if (isnan(h) || isnan(t)) {
+    return;
+  }
+  t=tt;
+  h=hh;
+}
+
+
